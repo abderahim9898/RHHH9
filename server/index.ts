@@ -6,6 +6,7 @@ import { handleWorkforceData } from "./routes/workforce";
 import { handleAttendanceData } from "./routes/attendance";
 import { handlePerformanceData } from "./routes/performance";
 import { handleTurnoverData } from "./routes/turnover";
+import { handleAdminAuth } from "./routes/admin";
 
 export function createServer() {
   const app = express();
@@ -31,6 +32,7 @@ export function createServer() {
   app.get("/api/attendance", handleAttendanceData);
   app.get("/api/performance", handlePerformanceData);
   app.get("/api/turnover", handleTurnoverData);
+  app.get("/api/admin/auth", handleAdminAuth);
 
   return app;
 }
