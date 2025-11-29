@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 export async function handleAdminAuth(_req: Request, res: Response) {
   try {
     const googleSheetUrl =
-      "https://script.google.com/macros/s/AKfycbyyUb_zDNexKTFqsJNBhxKLWQS-rciXiphj0BRTnjOKBLtmRKdOHGAzcIrPM5KWpbJS/exec";
+      "https://script.google.com/macros/s/AKfycbwHvky0ULsONJ-lvYRSlX5sPAhiTu1LwqSWFlaaK2ch_mxkJJx-MRte4p7Haq0ZIg4/exec";
 
     const response = await fetch(googleSheetUrl, {
       headers: {
