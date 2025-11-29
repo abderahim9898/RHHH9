@@ -18,7 +18,6 @@ import AdminSuperadmin from "./pages/AdminSuperadmin";
 import AdminPointage from "./pages/AdminPointage";
 import AdminLaboural from "./pages/AdminLaboural";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Layout from "./components/Layout";
 
 const queryClient = new QueryClient();
 
@@ -30,45 +29,43 @@ export default function App() {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/workforce" element={<Workforce />} />
-                <Route path="/recruitment" element={<Recruitment />} />
-                <Route path="/attendance" element={<Attendance />} />
-                <Route path="/performance" element={<Performance />} />
-                <Route path="/turnover" element={<Turnover />} />
-                <Route path="/incidents" element={<Incidents />} />
-                <Route path="/departures" element={<Departures />} />
-                <Route path="/sector" element={<Sector />} />
-                <Route
-                  path="/admin/superadmin"
-                  element={
-                    <ProtectedRoute requiredPermission="SUPERADMIN">
-                      <AdminSuperadmin />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/pointage"
-                  element={
-                    <ProtectedRoute requiredPermission="POINTAGE">
-                      <AdminPointage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/laboural"
-                  element={
-                    <ProtectedRoute requiredPermission="LABOURAL">
-                      <AdminLaboural />
-                    </ProtectedRoute>
-                  }
-                />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Layout>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/workforce" element={<Workforce />} />
+              <Route path="/recruitment" element={<Recruitment />} />
+              <Route path="/attendance" element={<Attendance />} />
+              <Route path="/performance" element={<Performance />} />
+              <Route path="/turnover" element={<Turnover />} />
+              <Route path="/incidents" element={<Incidents />} />
+              <Route path="/departures" element={<Departures />} />
+              <Route path="/sector" element={<Sector />} />
+              <Route
+                path="/admin/superadmin"
+                element={
+                  <ProtectedRoute requiredPermission="SUPERADMIN">
+                    <AdminSuperadmin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/pointage"
+                element={
+                  <ProtectedRoute requiredPermission="POINTAGE">
+                    <AdminPointage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/laboural"
+                element={
+                  <ProtectedRoute requiredPermission="LABOURAL">
+                    <AdminLaboural />
+                  </ProtectedRoute>
+                }
+              />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>
