@@ -5,12 +5,32 @@ export async function handleAdminAuth(_req: Request, res: Response) {
     const googleSheetUrl =
       "https://script.google.com/macros/s/AKfycbyyUb_zDNexKTFqsJNBhxKLWQS-rciXiphj0BRTnjOKBLtmRKdOHGAzcIrPM5KWpbJS/exec";
 
-    const response = await fetch(googleSheetUrl);
+    const response = await fetch(googleSheetUrl, {
+      headers: {
+        "Accept": "application/json",
+      },
+    });
 
     if (!response.ok) {
+      console.error(
+        `Google Sheets API returned status ${response.status}: ${response.statusText}`
+      );
       return res.status(response.status).json({
         error: "Failed to fetch authentication data",
         status: response.status,
+        statusText: response.statusText,
+      });
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const text = await response.text();
+      console.error(
+        `Unexpected content type from Google Sheets: ${contentType}. Response: ${text.substring(0, 200)}`
+      );
+      return res.status(500).json({
+        error: "Invalid response format from Google Sheets",
+        receivedContentType: contentType,
       });
     }
 
