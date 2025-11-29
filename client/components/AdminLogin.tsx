@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Lock } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth, type Permission } from "@/contexts/AuthContext";
 
 interface AdminLoginProps {
   isOpen: boolean;
@@ -21,6 +22,20 @@ export default function AdminLogin({ isOpen, onOpenChange }: AdminLoginProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { login, isLoading, session } = useAuth();
+  const navigate = useNavigate();
+
+  const getAdminPath = (permission: Permission): string => {
+    switch (permission) {
+      case "SUPERADMIN":
+        return "/admin/superadmin";
+      case "POINTAGE":
+        return "/admin/pointage";
+      case "LABOURAL":
+        return "/admin/laboural";
+      default:
+        return "/";
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +51,14 @@ export default function AdminLogin({ isOpen, onOpenChange }: AdminLoginProps) {
       setEmail("");
       setPassword("");
       onOpenChange(false);
+
+      // Redirect to the appropriate admin page based on permission
+      setTimeout(() => {
+        const auth = useAuth();
+        if (auth.session?.permission) {
+          navigate(getAdminPath(auth.session.permission));
+        }
+      }, 0);
     } catch (err) {
       setError(
         err instanceof Error
