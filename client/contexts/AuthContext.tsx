@@ -40,6 +40,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const response = await fetch("/api/admin/auth");
+
+      if (!response.ok) {
+        throw new Error("Unable to fetch authentication data from server");
+      }
+
       const data = await response.json();
 
       if (!Array.isArray(data) || data.length === 0) {
