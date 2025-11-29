@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Lock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AdminLoginProps {
   isOpen: boolean;
@@ -18,43 +19,62 @@ interface AdminLoginProps {
 export default function AdminLogin({ isOpen, onOpenChange }: AdminLoginProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { login, isLoading, session } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setIsLoading(true);
+
+    if (!email || !password) {
+      setError("Veuillez remplir tous les champs");
+      return;
+    }
 
     try {
-      // TODO: Replace with actual authentication logic
-      // For now, we'll just validate that both fields are filled
-      if (!email || !password) {
-        setError("Veuillez remplir tous les champs");
-        setIsLoading(false);
-        return;
-      }
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Here you would typically make an API call to authenticate
-      // Example: const response = await fetch('/api/admin/login', { method: 'POST', body: JSON.stringify({ email, password }) })
-      // For now, just log the credentials (don't do this in production!)
-      console.log("Login attempt with:", { email, password });
-
-      // Clear form and close modal on success
+      await login(email, password);
       setEmail("");
       setPassword("");
       onOpenChange(false);
     } catch (err) {
       setError(
-        "Une erreur est survenue lors de la connexion. Veuillez réessayer.",
+        err instanceof Error
+          ? err.message
+          : "Une erreur est survenue lors de la connexion",
       );
-    } finally {
-      setIsLoading(false);
     }
   };
+
+  if (session?.isAuthenticated) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
+                <Lock className="w-6 h-6 text-accent-foreground" />
+              </div>
+            </div>
+            <DialogTitle className="text-center">Connecté</DialogTitle>
+            <DialogDescription className="text-center">
+              Vous êtes connecté en tant que {session.email}
+              <br />
+              Permission: {session.permission}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex gap-2 pt-4">
+            <Button
+              onClick={() => onOpenChange(false)}
+              className="flex-1"
+            >
+              Fermer
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
