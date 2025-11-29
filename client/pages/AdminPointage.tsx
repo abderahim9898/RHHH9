@@ -2,15 +2,64 @@ import Layout from "@/components/Layout";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { LogOut, Clock } from "lucide-react";
+import { LogOut, Clock, Upload, FileUp } from "lucide-react";
+import { useState } from "react";
 
 export default function AdminPointage() {
   const { session, logout } = useAuth();
   const navigate = useNavigate();
+  const [uploadProgress, setUploadProgress] = useState<{
+    [key: string]: number;
+  }>({});
 
   const handleLogout = () => {
     logout();
     navigate("/");
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.currentTarget.classList.add("border-blue-500", "bg-blue-50");
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.currentTarget.classList.remove("border-blue-500", "bg-blue-50");
+  };
+
+  const handleDrop = (e: React.DragEvent, uploadId: string) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove("border-blue-500", "bg-blue-50");
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      simulateUpload(uploadId, files[0]);
+    }
+  };
+
+  const handleFileSelect = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    uploadId: string
+  ) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      simulateUpload(uploadId, files[0]);
+    }
+  };
+
+  const simulateUpload = (uploadId: string, file: File) => {
+    // Simulate upload progress
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 30;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+      }
+      setUploadProgress((prev) => ({
+        ...prev,
+        [uploadId]: progress,
+      }));
+    }, 300);
   };
 
   return (
@@ -21,50 +70,116 @@ export default function AdminPointage() {
             <Clock className="w-8 h-8" />
             <h1 className="text-3xl font-bold">Gestion du Pointage</h1>
           </div>
-          <p className="text-white/90">
-            Bienvenue, {session?.email}
-          </p>
+          <p className="text-white/90">Bienvenue, {session?.email}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="border border-border rounded-lg p-6 bg-card hover:shadow-lg transition-shadow">
-            <h2 className="text-xl font-semibold mb-3">Pointage en Direct</h2>
+        <div className="space-y-6">
+          {/* Upload Pointage Section */}
+          <div className="border border-border rounded-lg p-6 bg-card">
+            <div className="flex items-center gap-2 mb-4">
+              <FileUp className="w-5 h-5 text-blue-500" />
+              <h2 className="text-xl font-semibold">Télécharger Pointage</h2>
+            </div>
             <p className="text-muted-foreground mb-4">
-              Consultez les pointages actuels des employés en temps réel.
+              Téléchargez le fichier contenant les données de pointage des employés
             </p>
-            <Button variant="outline" className="w-full">
-              Accéder
-            </Button>
+
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, "pointage")}
+              className="border-2 border-dashed border-border rounded-lg p-8 text-center transition-colors cursor-pointer hover:border-blue-400"
+            >
+              <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
+              <p className="text-muted-foreground mb-2">
+                Glissez-déposez votre fichier ici
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">ou</p>
+              <label className="inline-block">
+                <input
+                  type="file"
+                  accept=".xlsx,.xls,.csv"
+                  onChange={(e) => handleFileSelect(e, "pointage")}
+                  className="hidden"
+                />
+                <Button variant="outline" asChild className="cursor-pointer">
+                  <span>Sélectionner un fichier</span>
+                </Button>
+              </label>
+              <p className="text-xs text-muted-foreground mt-4">
+                Formats acceptés: Excel (.xlsx, .xls) ou CSV
+              </p>
+
+              {uploadProgress["pointage"] !== undefined && (
+                <div className="mt-4">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-500 h-2 rounded-full transition-all"
+                      style={{
+                        width: `${uploadProgress["pointage"]}%`,
+                      }}
+                    ></div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {Math.round(uploadProgress["pointage"])}% complété
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="border border-border rounded-lg p-6 bg-card hover:shadow-lg transition-shadow">
-            <h2 className="text-xl font-semibold mb-3">Historique Pointage</h2>
+          {/* Upload Presence Section */}
+          <div className="border border-border rounded-lg p-6 bg-card">
+            <div className="flex items-center gap-2 mb-4">
+              <FileUp className="w-5 h-5 text-blue-500" />
+              <h2 className="text-xl font-semibold">Télécharger Présence</h2>
+            </div>
             <p className="text-muted-foreground mb-4">
-              Consultez l'historique complet des pointages par période.
+              Téléchargez le fichier contenant les données de présence et d'absence
             </p>
-            <Button variant="outline" className="w-full">
-              Accéder
-            </Button>
-          </div>
 
-          <div className="border border-border rounded-lg p-6 bg-card hover:shadow-lg transition-shadow">
-            <h2 className="text-xl font-semibold mb-3">Absences</h2>
-            <p className="text-muted-foreground mb-4">
-              Gérer les absences et les justificatifs des employés.
-            </p>
-            <Button variant="outline" className="w-full">
-              Accéder
-            </Button>
-          </div>
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, "presence")}
+              className="border-2 border-dashed border-border rounded-lg p-8 text-center transition-colors cursor-pointer hover:border-blue-400"
+            >
+              <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
+              <p className="text-muted-foreground mb-2">
+                Glissez-déposez votre fichier ici
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">ou</p>
+              <label className="inline-block">
+                <input
+                  type="file"
+                  accept=".xlsx,.xls,.csv"
+                  onChange={(e) => handleFileSelect(e, "presence")}
+                  className="hidden"
+                />
+                <Button variant="outline" asChild className="cursor-pointer">
+                  <span>Sélectionner un fichier</span>
+                </Button>
+              </label>
+              <p className="text-xs text-muted-foreground mt-4">
+                Formats acceptés: Excel (.xlsx, .xls) ou CSV
+              </p>
 
-          <div className="border border-border rounded-lg p-6 bg-card hover:shadow-lg transition-shadow">
-            <h2 className="text-xl font-semibold mb-3">Rapports Pointage</h2>
-            <p className="text-muted-foreground mb-4">
-              Générer des rapports détaillés sur le pointage par département.
-            </p>
-            <Button variant="outline" className="w-full">
-              Accéder
-            </Button>
+              {uploadProgress["presence"] !== undefined && (
+                <div className="mt-4">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-500 h-2 rounded-full transition-all"
+                      style={{
+                        width: `${uploadProgress["presence"]}%`,
+                      }}
+                    ></div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {Math.round(uploadProgress["presence"])}% complété
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
