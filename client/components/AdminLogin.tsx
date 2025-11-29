@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -50,15 +50,6 @@ export default function AdminLogin({ isOpen, onOpenChange }: AdminLoginProps) {
       await login(email, password);
       setEmail("");
       setPassword("");
-      onOpenChange(false);
-
-      // Redirect to the appropriate admin page based on permission
-      setTimeout(() => {
-        const auth = useAuth();
-        if (auth.session?.permission) {
-          navigate(getAdminPath(auth.session.permission));
-        }
-      }, 0);
     } catch (err) {
       setError(
         err instanceof Error
@@ -67,6 +58,12 @@ export default function AdminLogin({ isOpen, onOpenChange }: AdminLoginProps) {
       );
     }
   };
+
+  useEffect(() => {
+    if (session?.isAuthenticated && !isOpen) {
+      navigate(getAdminPath(session.permission));
+    }
+  }, [session?.isAuthenticated, isOpen, navigate, session?.permission]);
 
   if (session?.isAuthenticated) {
     return (
@@ -88,10 +85,12 @@ export default function AdminLogin({ isOpen, onOpenChange }: AdminLoginProps) {
 
           <div className="flex gap-2 pt-4">
             <Button
-              onClick={() => onOpenChange(false)}
+              onClick={() => {
+                onOpenChange(false);
+              }}
               className="flex-1"
             >
-              Fermer
+              Accéder au tableau de bord
             </Button>
           </div>
         </DialogContent>
