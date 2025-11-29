@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const googleSheetUrl =
-        "https://script.google.com/macros/s/AKfycbwxQs8JvbVaJwUApD-cW7QEThy7XT9BMczNwibgfMjlDwKi0yKiDOv4AEBZKKbOaAB/exec";
+        "https://script.google.com/macros/s/AKfycbyyUb_zDNexKTFqsJNBhxKLWQS-rciXiphj0BRTnjOKBLtmRKdOHGAzcIrPM5KWpbJS/exec";
 
       const response = await fetch(googleSheetUrl);
       const data = await response.json();
