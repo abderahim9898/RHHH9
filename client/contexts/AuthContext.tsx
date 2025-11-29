@@ -39,10 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const googleSheetUrl =
-        "https://script.google.com/macros/s/AKfycbyyUb_zDNexKTFqsJNBhxKLWQS-rciXiphj0BRTnjOKBLtmRKdOHGAzcIrPM5KWpbJS/exec";
-
-      const response = await fetch(googleSheetUrl);
+      const response = await fetch("/api/admin/auth");
       const data = await response.json();
 
       if (!Array.isArray(data) || data.length === 0) {
