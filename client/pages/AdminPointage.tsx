@@ -2,64 +2,16 @@ import Layout from "@/components/Layout";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { LogOut, Clock, Upload, FileUp } from "lucide-react";
-import { useState } from "react";
+import { LogOut, Clock, FileUp } from "lucide-react";
+import FileUploadSection from "@/components/FileUploadSection";
 
 export default function AdminPointage() {
   const { session, logout } = useAuth();
   const navigate = useNavigate();
-  const [uploadProgress, setUploadProgress] = useState<{
-    [key: string]: number;
-  }>({});
 
   const handleLogout = () => {
     logout();
     navigate("/");
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.currentTarget.classList.add("border-blue-500", "bg-blue-50");
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.currentTarget.classList.remove("border-blue-500", "bg-blue-50");
-  };
-
-  const handleDrop = (e: React.DragEvent, uploadId: string) => {
-    e.preventDefault();
-    e.currentTarget.classList.remove("border-blue-500", "bg-blue-50");
-
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      simulateUpload(uploadId, files[0]);
-    }
-  };
-
-  const handleFileSelect = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    uploadId: string
-  ) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      simulateUpload(uploadId, files[0]);
-    }
-  };
-
-  const simulateUpload = (uploadId: string, file: File) => {
-    // Simulate upload progress
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 30;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-      }
-      setUploadProgress((prev) => ({
-        ...prev,
-        [uploadId]: progress,
-      }));
-    }, 300);
   };
 
   return (
@@ -83,49 +35,11 @@ export default function AdminPointage() {
             <p className="text-muted-foreground mb-4">
               Téléchargez le fichier contenant les données de pointage des employés
             </p>
-
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, "pointage")}
-              className="border-2 border-dashed border-border rounded-lg p-8 text-center transition-colors cursor-pointer hover:border-blue-400"
-            >
-              <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-              <p className="text-muted-foreground mb-2">
-                Glissez-déposez votre fichier ici
-              </p>
-              <p className="text-sm text-muted-foreground mb-4">ou</p>
-              <label className="inline-block">
-                <input
-                  type="file"
-                  accept=".xlsx,.xls,.csv"
-                  onChange={(e) => handleFileSelect(e, "pointage")}
-                  className="hidden"
-                />
-                <Button variant="outline" asChild className="cursor-pointer">
-                  <span>Sélectionner un fichier</span>
-                </Button>
-              </label>
-              <p className="text-xs text-muted-foreground mt-4">
-                Formats acceptés: Excel (.xlsx, .xls) ou CSV
-              </p>
-
-              {uploadProgress["pointage"] !== undefined && (
-                <div className="mt-4">
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-blue-500 h-2 rounded-full transition-all"
-                      style={{
-                        width: `${uploadProgress["pointage"]}%`,
-                      }}
-                    ></div>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {Math.round(uploadProgress["pointage"])}% complété
-                  </p>
-                </div>
-              )}
-            </div>
+            <FileUploadSection
+              title="Pointage"
+              description="Upload pointage data"
+              googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+            />
           </div>
 
           {/* Upload Presence Section */}
@@ -137,49 +51,11 @@ export default function AdminPointage() {
             <p className="text-muted-foreground mb-4">
               Téléchargez le fichier contenant les données de présence et d'absence
             </p>
-
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, "presence")}
-              className="border-2 border-dashed border-border rounded-lg p-8 text-center transition-colors cursor-pointer hover:border-blue-400"
-            >
-              <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-              <p className="text-muted-foreground mb-2">
-                Glissez-déposez votre fichier ici
-              </p>
-              <p className="text-sm text-muted-foreground mb-4">ou</p>
-              <label className="inline-block">
-                <input
-                  type="file"
-                  accept=".xlsx,.xls,.csv"
-                  onChange={(e) => handleFileSelect(e, "presence")}
-                  className="hidden"
-                />
-                <Button variant="outline" asChild className="cursor-pointer">
-                  <span>Sélectionner un fichier</span>
-                </Button>
-              </label>
-              <p className="text-xs text-muted-foreground mt-4">
-                Formats acceptés: Excel (.xlsx, .xls) ou CSV
-              </p>
-
-              {uploadProgress["presence"] !== undefined && (
-                <div className="mt-4">
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-blue-500 h-2 rounded-full transition-all"
-                      style={{
-                        width: `${uploadProgress["presence"]}%`,
-                      }}
-                    ></div>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {Math.round(uploadProgress["presence"])}% complété
-                  </p>
-                </div>
-              )}
-            </div>
+            <FileUploadSection
+              title="Presence"
+              description="Upload presence data"
+              googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+            />
           </div>
         </div>
 
