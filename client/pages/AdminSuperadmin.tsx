@@ -58,7 +58,7 @@ export default function AdminSuperadmin() {
                 <FileUploadSection
                   title="Presence"
                   description="Upload presence data"
-                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxvF4KTipY1HDUPquth1Cpg8kIbeA2RfCZcVHyqcqRuuks0HsNzWPr60sNrkR-qHK4_yw/exec"
                 />
               </div>
             </div>
