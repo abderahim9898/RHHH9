@@ -111,7 +111,7 @@ export default function FileUploadSection({
           },
           body: JSON.stringify({
             action: "uploadData",
-            headers: i === 0 ? data.headers : undefined,
+            headers: data.headers,
             data: batchData,
             isBatch: true,
             batchNumber: i,
