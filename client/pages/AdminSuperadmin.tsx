@@ -96,7 +96,7 @@ export default function AdminSuperadmin() {
                 <FileUploadSection
                   title="Recruitment"
                   description="Upload recruitment database"
-                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                  googleScriptUrl="https://script.google.com/macros/s/AKfycbz16Vg2z5c-1C8QO5Q94yMMXS-r3YZJRVKX75BMZ8MOUANKLhoRHmHna5DIkNP4o2Wc/exec"
                 />
               </div>
 
