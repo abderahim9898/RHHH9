@@ -43,7 +43,7 @@ export default function AdminSuperadmin() {
                 <FileUploadSection
                   title="Pointage"
                   description="Upload pointage data"
-                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                  googleScriptUrl="https://script.google.com/macros/s/AKfycby4mCciphgVZY6iUNEYxcQMH6Tz90pJNLQqoqTcQNyZwk3W5mi3nhb8Ntp9IKM58coUlg/exec"
                 />
               </div>
 
