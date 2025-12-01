@@ -4,10 +4,95 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { LogOut, Shield, FileUp } from "lucide-react";
 import FileUploadSection from "@/components/FileUploadSection";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminSuperadmin() {
   const { session, logout } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [turnoverLoading, setTurnoverLoading] = useState(false);
+  const [turnoverData, setTurnoverData] = useState({
+    mois: "",
+    baja: "",
+    group: "",
+    contrat: "",
+    effectif1: "",
+    effectif2: "",
+  });
+
+  const handleTurnoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setTurnoverData(prev => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleTurnoverReset = () => {
+    setTurnoverData({
+      mois: "",
+      baja: "",
+      group: "",
+      contrat: "",
+      effectif1: "",
+      effectif2: "",
+    });
+  };
+
+  const handleTurnoverSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!turnoverData.mois || !turnoverData.baja || !turnoverData.group || !turnoverData.contrat || !turnoverData.effectif1 || !turnoverData.effectif2) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setTurnoverLoading(true);
+    try {
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          googleScriptUrl: "https://script.google.com/macros/s/AKfycbwwdWlQ10lmBrp2v_368EkjcBDsgljzBfLsTiV8NbtZpQlSffin8RpQmys0GSqlk5A/exec",
+          action: "uploadData",
+          headers: ["Mois", "Baja", "Groupe", "Contrat", "Effectif1", "Effectif2"],
+          data: [{
+            Mois: turnoverData.mois,
+            Baja: turnoverData.baja,
+            Groupe: turnoverData.group,
+            Contrat: turnoverData.contrat,
+            Effectif1: turnoverData.effectif1,
+            Effectif2: turnoverData.effectif2,
+          }],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la soumission");
+      }
+
+      toast({
+        title: "Succès",
+        description: "Données de turnover ajoutées avec succès",
+      });
+      handleTurnoverReset();
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: error instanceof Error ? error.message : "Une erreur est survenue",
+        variant: "destructive",
+      });
+    } finally {
+      setTurnoverLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     logout();
