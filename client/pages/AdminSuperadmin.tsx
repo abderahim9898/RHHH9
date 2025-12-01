@@ -215,15 +215,14 @@ export default function AdminSuperadmin() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="mois" className="text-sm font-medium">
-                    Mois
+                    Mois et Année
                   </label>
                   <input
                     id="mois"
-                    type="text"
+                    type="month"
                     value={turnoverData.mois}
                     onChange={handleTurnoverChange}
                     className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    placeholder="Ex: October 2025"
                   />
                 </div>
 
