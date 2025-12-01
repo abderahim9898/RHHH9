@@ -211,7 +211,7 @@ export default function AdminSuperadmin() {
               Saisissez les informations de départ des employés
             </p>
 
-            <form className="space-y-6">
+            <form onSubmit={handleTurnoverSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="mois" className="text-sm font-medium">
@@ -220,6 +220,8 @@ export default function AdminSuperadmin() {
                   <input
                     id="mois"
                     type="month"
+                    value={turnoverData.mois}
+                    onChange={handleTurnoverChange}
                     className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="Sélectionnez un mois"
                   />
@@ -232,6 +234,8 @@ export default function AdminSuperadmin() {
                   <input
                     id="baja"
                     type="text"
+                    value={turnoverData.baja}
+                    onChange={handleTurnoverChange}
                     className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="Entrez Baja"
                   />
@@ -244,6 +248,8 @@ export default function AdminSuperadmin() {
                   <input
                     id="group"
                     type="text"
+                    value={turnoverData.group}
+                    onChange={handleTurnoverChange}
                     className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="Entrez le groupe"
                   />
@@ -256,6 +262,8 @@ export default function AdminSuperadmin() {
                   <input
                     id="contrat"
                     type="text"
+                    value={turnoverData.contrat}
+                    onChange={handleTurnoverChange}
                     className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="Entrez le type de contrat"
                   />
@@ -268,6 +276,8 @@ export default function AdminSuperadmin() {
                   <input
                     id="effectif1"
                     type="number"
+                    value={turnoverData.effectif1}
+                    onChange={handleTurnoverChange}
                     className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="Entrez l'effectif 1"
                   />
@@ -280,6 +290,8 @@ export default function AdminSuperadmin() {
                   <input
                     id="effectif2"
                     type="number"
+                    value={turnoverData.effectif2}
+                    onChange={handleTurnoverChange}
                     className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="Entrez l'effectif 2"
                   />
@@ -287,14 +299,15 @@ export default function AdminSuperadmin() {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button type="button" variant="outline" className="flex-1">
+                <Button type="button" variant="outline" className="flex-1" onClick={handleTurnoverReset} disabled={turnoverLoading}>
                   Réinitialiser
                 </Button>
                 <Button
                   type="submit"
                   className="flex-1 bg-purple-600 hover:bg-purple-700"
+                  disabled={turnoverLoading}
                 >
-                  Soumettre
+                  {turnoverLoading ? "Envoi en cours..." : "Soumettre"}
                 </Button>
               </div>
             </form>
