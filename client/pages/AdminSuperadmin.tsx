@@ -2,125 +2,17 @@ import Layout from "@/components/Layout";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { LogOut, Shield, Upload, FileUp } from "lucide-react";
-import { useState } from "react";
+import { LogOut, Shield, FileUp } from "lucide-react";
+import FileUploadSection from "@/components/FileUploadSection";
 
 export default function AdminSuperadmin() {
   const { session, logout } = useAuth();
   const navigate = useNavigate();
-  const [uploadProgress, setUploadProgress] = useState<{
-    [key: string]: number;
-  }>({});
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.currentTarget.classList.add("border-purple-500", "bg-purple-50");
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.currentTarget.classList.remove("border-purple-500", "bg-purple-50");
-  };
-
-  const handleDrop = (e: React.DragEvent, uploadId: string) => {
-    e.preventDefault();
-    e.currentTarget.classList.remove("border-purple-500", "bg-purple-50");
-
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      simulateUpload(uploadId, files[0]);
-    }
-  };
-
-  const handleFileSelect = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    uploadId: string
-  ) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      simulateUpload(uploadId, files[0]);
-    }
-  };
-
-  const simulateUpload = (uploadId: string, file: File) => {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 30;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-      }
-      setUploadProgress((prev) => ({
-        ...prev,
-        [uploadId]: progress,
-      }));
-    }, 300);
-  };
-
-  const UploadSection = ({
-    id,
-    title,
-    description,
-  }: {
-    id: string;
-    title: string;
-    description: string;
-  }) => (
-    <div className="border border-border rounded-lg p-6 bg-card">
-      <div className="flex items-center gap-2 mb-4">
-        <FileUp className="w-5 h-5 text-purple-500" />
-        <h3 className="text-xl font-semibold">{title}</h3>
-      </div>
-      <p className="text-muted-foreground mb-4">{description}</p>
-
-      <div
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={(e) => handleDrop(e, id)}
-        className="border-2 border-dashed border-border rounded-lg p-8 text-center transition-colors cursor-pointer hover:border-purple-400"
-      >
-        <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-        <p className="text-muted-foreground mb-2">
-          Glissez-déposez votre fichier ici
-        </p>
-        <p className="text-sm text-muted-foreground mb-4">ou</p>
-        <label className="inline-block">
-          <input
-            type="file"
-            accept=".xlsx,.xls,.csv"
-            onChange={(e) => handleFileSelect(e, id)}
-            className="hidden"
-          />
-          <Button variant="outline" asChild className="cursor-pointer">
-            <span>Sélectionner un fichier</span>
-          </Button>
-        </label>
-        <p className="text-xs text-muted-foreground mt-4">
-          Formats acceptés: Excel (.xlsx, .xls) ou CSV
-        </p>
-
-        {uploadProgress[id] !== undefined && (
-          <div className="mt-4">
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-purple-500 h-2 rounded-full transition-all"
-                style={{
-                  width: `${uploadProgress[id]}%`,
-                }}
-              ></div>
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              {Math.round(uploadProgress[id])}% complété
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <Layout>
@@ -140,16 +32,35 @@ export default function AdminSuperadmin() {
               Gestion du Pointage
             </h2>
             <div className="grid grid-cols-1 gap-6">
-              <UploadSection
-                id="pointage"
-                title="Télécharger Pointage"
-                description="Téléchargez le fichier contenant les données de pointage des employés"
-              />
-              <UploadSection
-                id="presence"
-                title="Télécharger Présence"
-                description="Téléchargez le fichier contenant les données de présence et d'absence"
-              />
+              <div className="border border-border rounded-lg p-6 bg-card">
+                <div className="flex items-center gap-2 mb-4">
+                  <FileUp className="w-5 h-5 text-purple-500" />
+                  <h3 className="text-xl font-semibold">Télécharger Pointage</h3>
+                </div>
+                <p className="text-muted-foreground mb-4">
+                  Téléchargez le fichier contenant les données de pointage des employés
+                </p>
+                <FileUploadSection
+                  title="Pointage"
+                  description="Upload pointage data"
+                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                />
+              </div>
+
+              <div className="border border-border rounded-lg p-6 bg-card">
+                <div className="flex items-center gap-2 mb-4">
+                  <FileUp className="w-5 h-5 text-purple-500" />
+                  <h3 className="text-xl font-semibold">Télécharger Présence</h3>
+                </div>
+                <p className="text-muted-foreground mb-4">
+                  Téléchargez le fichier contenant les données de présence et d'absence
+                </p>
+                <FileUploadSection
+                  title="Presence"
+                  description="Upload presence data"
+                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                />
+              </div>
             </div>
           </div>
 
@@ -159,21 +70,50 @@ export default function AdminSuperadmin() {
               Gestion Laboural
             </h2>
             <div className="grid grid-cols-1 gap-6">
-              <UploadSection
-                id="database"
-                title="Télécharger la Base de Données RH"
-                description="Téléchargez le fichier contenant les données des employés"
-              />
-              <UploadSection
-                id="recruitment"
-                title="Télécharger la Base de Données Recrutement"
-                description="Téléchargez le fichier contenant les données de recrutement"
-              />
-              <UploadSection
-                id="temporary"
-                title="Télécharger la Base de Données Travailleurs Temporaires"
-                description="Téléchargez le fichier contenant les données des travailleurs temporaires"
-              />
+              <div className="border border-border rounded-lg p-6 bg-card">
+                <div className="flex items-center gap-2 mb-4">
+                  <FileUp className="w-5 h-5 text-purple-500" />
+                  <h3 className="text-xl font-semibold">Télécharger la Base de Données RH</h3>
+                </div>
+                <p className="text-muted-foreground mb-4">
+                  Téléchargez le fichier contenant les données des employés
+                </p>
+                <FileUploadSection
+                  title="Database"
+                  description="Upload RH database"
+                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                />
+              </div>
+
+              <div className="border border-border rounded-lg p-6 bg-card">
+                <div className="flex items-center gap-2 mb-4">
+                  <FileUp className="w-5 h-5 text-purple-500" />
+                  <h3 className="text-xl font-semibold">Télécharger la Base de Données Recrutement</h3>
+                </div>
+                <p className="text-muted-foreground mb-4">
+                  Téléchargez le fichier contenant les données de recrutement
+                </p>
+                <FileUploadSection
+                  title="Recruitment"
+                  description="Upload recruitment database"
+                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                />
+              </div>
+
+              <div className="border border-border rounded-lg p-6 bg-card">
+                <div className="flex items-center gap-2 mb-4">
+                  <FileUp className="w-5 h-5 text-purple-500" />
+                  <h3 className="text-xl font-semibold">Télécharger la Base de Données Travailleurs Temporaires</h3>
+                </div>
+                <p className="text-muted-foreground mb-4">
+                  Téléchargez le fichier contenant les données des travailleurs temporaires
+                </p>
+                <FileUploadSection
+                  title="Temporary Workers"
+                  description="Upload temporary workers database"
+                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                />
+              </div>
             </div>
           </div>
 
