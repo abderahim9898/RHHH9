@@ -96,36 +96,23 @@ export default function FileUploadSection({
     try {
       setUploadProgress(10);
 
-      const batchSize = 50;
-      const totalBatches = Math.ceil(data.rows.length / batchSize);
+      await fetch("/api/admin/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          googleScriptUrl: googleScriptUrl,
+          action: "uploadData",
+          headers: data.headers,
+          data: data.rows,
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch(() => {
+        return { ok: true };
+      });
 
-      for (let i = 0; i < totalBatches; i++) {
-        const start = i * batchSize;
-        const end = Math.min(start + batchSize, data.rows.length);
-        const batchData = data.rows.slice(start, end);
-
-        await fetch("/api/admin/upload", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            googleScriptUrl: googleScriptUrl,
-            action: "uploadData",
-            headers: data.headers,
-            data: batchData,
-            isBatch: true,
-            batchNumber: i,
-            totalBatches: totalBatches,
-            timestamp: new Date().toISOString(),
-          }),
-        }).catch(() => {
-          return { ok: true };
-        });
-
-        const progressStep = 90 / totalBatches;
-        setUploadProgress(10 + (i + 1) * progressStep);
-      }
+      setUploadProgress(90);
 
       setUploadProgress(100);
       return true;
