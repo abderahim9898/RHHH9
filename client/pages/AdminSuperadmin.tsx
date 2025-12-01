@@ -111,7 +111,7 @@ export default function AdminSuperadmin() {
                 <FileUploadSection
                   title="Temporary Workers"
                   description="Upload temporary workers database"
-                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxKLKZq4WXqT1Ueh6fFWW9XgOLA2L2ACGG0O_i8FoO29s3ESgQ1lPADUrmmX9cC6sTq/exec"
                 />
               </div>
             </div>
