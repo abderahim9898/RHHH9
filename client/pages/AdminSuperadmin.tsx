@@ -81,7 +81,7 @@ export default function AdminSuperadmin() {
                 <FileUploadSection
                   title="Database"
                   description="Upload RH database"
-                  googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                  googleScriptUrl="https://script.google.com/macros/s/AKfycbzTolLMQjvwvDXe8O3FgVIK_sjnOGzR0vdwk7q6RpzRas-dHPUbmEAXmHNLx9c6zGrA/exec"
                 />
               </div>
 
