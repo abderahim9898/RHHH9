@@ -96,22 +96,6 @@ export default function FileUploadSection({
     try {
       setUploadProgress(10);
 
-      setUploadProgress(20);
-      await fetch(googleScriptUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8",
-        },
-        body: JSON.stringify({
-          action: "clearSheet",
-          timestamp: new Date().toISOString(),
-        }),
-      }).catch(() => {
-        return { ok: true };
-      });
-
-      setUploadProgress(40);
-
       const batchSize = 50;
       const totalBatches = Math.ceil(data.rows.length / batchSize);
 
@@ -138,8 +122,8 @@ export default function FileUploadSection({
           return { ok: true };
         });
 
-        const progressStep = (90 - 40) / totalBatches;
-        setUploadProgress(40 + (i + 1) * progressStep);
+        const progressStep = 90 / totalBatches;
+        setUploadProgress(10 + (i + 1) * progressStep);
       }
 
       setUploadProgress(100);
