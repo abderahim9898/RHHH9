@@ -126,7 +126,7 @@ export default function AdminLaboural() {
               <FileUploadSection
                 title="Database"
                 description="Upload RH database"
-                googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                googleScriptUrl="https://script.google.com/macros/s/AKfycbzTolLMQjvwvDXe8O3FgVIK_sjnOGzR0vdwk7q6RpzRas-dHPUbmEAXmHNLx9c6zGrA/exec"
               />
             </div>
 
@@ -144,7 +144,7 @@ export default function AdminLaboural() {
               <FileUploadSection
                 title="Recruitment"
                 description="Upload recruitment database"
-                googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                googleScriptUrl="https://script.google.com/macros/s/AKfycbz16Vg2z5c-1C8QO5Q94yMMXS-r3YZJRVKX75BMZ8MOUANKLhoRHmHna5DIkNP4o2Wc/exec"
               />
             </div>
 
@@ -162,7 +162,7 @@ export default function AdminLaboural() {
               <FileUploadSection
                 title="Temporary Workers"
                 description="Upload temporary workers database"
-                googleScriptUrl="https://script.google.com/macros/s/AKfycbxzPyGSZHI_1ll72EtyYLpDisgJmIXcUlYXdoy8HA_XjVNAz06R9AbpXL7roKJtkKsLmg/exec"
+                googleScriptUrl="https://script.google.com/macros/s/AKfycbxKLKZq4WXqT1Ueh6fFWW9XgOLA2L2ACGG0O_i8FoO29s3ESgQ1lPADUrmmX9cC6sTq/exec"
               />
             </div>
 
