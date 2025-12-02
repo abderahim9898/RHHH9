@@ -27,8 +27,16 @@ interface MonthData {
 const formatMonthDisplay = (month: string | number): string => {
   const monthStr = String(month).trim();
 
-  // Check if it's an ISO date string
-  if (monthStr.includes("T") || monthStr.includes("-")) {
+  // Check if it's YYYY-MM format (from HTML month input)
+  if (/^\d{4}-\d{2}$/.test(monthStr)) {
+    const [year, monthNum] = monthStr.split("-");
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+    return `${monthNames[parseInt(monthNum) - 1]} ${year}`;
+  }
+
+  // Check if it's an ISO date string (contains T or Z)
+  if (monthStr.includes("T") || monthStr.includes("Z")) {
     try {
       const date = new Date(monthStr);
       const monthNames = ["January", "February", "March", "April", "May", "June",
