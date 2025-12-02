@@ -40,6 +40,15 @@ export default function AdminLaboural() {
     });
   };
 
+  const formatMonthYear = (monthValue: string): string => {
+    if (!monthValue) return "";
+    const [year, month] = monthValue.split("-");
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+    return `${monthNames[date.getMonth()]} ${year}`;
+  };
+
   const handleTurnoverSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -62,7 +71,7 @@ export default function AdminLaboural() {
         body: JSON.stringify({
           googleScriptUrl: "https://script.google.com/macros/s/AKfycbxIMp6iuxHymhAOEgHKjcQjRHisRkNktK2PQJl8cgzaukc3CKJ1sdX95isSqelipxSA/exec",
           action: "submitForm",
-          mois: turnoverData.mois,
+          mois: formatMonthYear(turnoverData.mois),
           baja: turnoverData.baja,
           groupe: turnoverData.group,
           contrat: turnoverData.contrat,
