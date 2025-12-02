@@ -46,7 +46,7 @@ export default function AdminSuperadmin() {
     const monthNum = parseInt(month) - 1;
     const monthNames = ["January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"];
-    return `${monthNames[monthNum]} ${year}`;
+    return `${monthNames[monthNum]} 2, ${year}`;
   };
 
   const handleTurnoverSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
