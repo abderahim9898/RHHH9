@@ -11,6 +11,7 @@ interface RecruitmentRecord {
   month: string | number;
   sexo: string;
   department: string;
+  contado: string;
   nbBaja: number;
 }
 
@@ -60,14 +61,16 @@ export default function Recruitment() {
             const qz = (row[0] || "").toString().trim();
             const month = row[1] || "";
             const sexo = (row[2] || "").toString().trim();
-            const department = (row[3] || "").toString().trim();
-            const nbBaja = parseInt(row[4]) || 0;
+            const department = (row[4] || "").toString().trim();
+            const contado = (row[3] || "").toString().trim();
+            const nbBaja = parseInt(row[5]) || 0;
 
             if (qz && month && department) {
               processedData.push({
                 qz,
                 month,
                 sexo,
+                contado,
                 department,
                 nbBaja,
               });
@@ -222,7 +225,8 @@ export default function Recruitment() {
                     <tr className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800">
                       <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">QZ</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Mois</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Sexo/Contrado</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Sexo</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Contrado</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Département</th>
                       <th className="px-4 py-3 text-right font-semibold text-gray-900 dark:text-white">Nombre Baja</th>
                     </tr>
@@ -243,6 +247,7 @@ export default function Recruitment() {
                           <td className="px-4 py-3 text-gray-900 dark:text-white font-medium">{record.qz}</td>
                           <td className="px-4 py-3 text-gray-600 dark:text-gray-400">Mois {record.month}</td>
                           <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{record.sexo}</td>
+                          <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{record.contado}</td>
                           <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{record.department}</td>
                           <td className="px-4 py-3 text-right">
                             <span className="inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded font-semibold">
