@@ -38,7 +38,7 @@ export default function AdminPointage() {
             <FileUploadSection
               title="Pointage"
               description="Upload pointage data"
-              googleScriptUrl="https://script.google.com/macros/s/AKfycbw4yPvrb-225xDPI593DiXwu5RmWwBNE_ztlbCuKOdn9RUAAgU1w03qy523FzH2Ek220A/exec"
+              googleScriptUrl="https://script.google.com/macros/s/AKfycby4mCciphgVZY6iUNEYxcQMH6Tz90pJNLQqoqTcQNyZwk3W5mi3nhb8Ntp9IKM58coUlg/exec"
             />
           </div>
 
@@ -54,7 +54,7 @@ export default function AdminPointage() {
             <FileUploadSection
               title="Presence"
               description="Upload presence data"
-              googleScriptUrl="https://script.google.com/macros/s/AKfycbw4yPvrb-225xDPI593DiXwu5RmWwBNE_ztlbCuKOdn9RUAAgU1w03qy523FzH2Ek220A/exec"
+              googleScriptUrl="https://script.google.com/macros/s/AKfycbxvF4KTipY1HDUPquth1Cpg8kIbeA2RfCZcVHyqcqRuuks0HsNzWPr60sNrkR-qHK4_yw/exec"
             />
           </div>
         </div>
