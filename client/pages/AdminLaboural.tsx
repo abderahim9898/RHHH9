@@ -175,18 +175,19 @@ export default function AdminLaboural() {
                 Saisissez les informations de départ des employés
               </p>
 
-              <form className="space-y-6">
+              <form onSubmit={handleTurnoverSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Mois */}
                   <div className="space-y-2">
                     <label htmlFor="mois" className="text-sm font-medium">
-                      Mois
+                      Mois et Année
                     </label>
                     <input
                       id="mois"
                       type="month"
+                      value={turnoverData.mois}
+                      onChange={handleTurnoverChange}
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
-                      placeholder="Sélectionnez un mois"
                     />
                   </div>
 
@@ -198,6 +199,8 @@ export default function AdminLaboural() {
                     <input
                       id="baja"
                       type="text"
+                      value={turnoverData.baja}
+                      onChange={handleTurnoverChange}
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="Entrez Baja"
                     />
@@ -211,6 +214,8 @@ export default function AdminLaboural() {
                     <input
                       id="group"
                       type="text"
+                      value={turnoverData.group}
+                      onChange={handleTurnoverChange}
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="Entrez le groupe"
                     />
@@ -224,6 +229,8 @@ export default function AdminLaboural() {
                     <input
                       id="contrat"
                       type="text"
+                      value={turnoverData.contrat}
+                      onChange={handleTurnoverChange}
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="Entrez le type de contrat"
                     />
@@ -237,6 +244,8 @@ export default function AdminLaboural() {
                     <input
                       id="effectif1"
                       type="number"
+                      value={turnoverData.effectif1}
+                      onChange={handleTurnoverChange}
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="Entrez l'effectif 1"
                     />
@@ -250,6 +259,8 @@ export default function AdminLaboural() {
                     <input
                       id="effectif2"
                       type="number"
+                      value={turnoverData.effectif2}
+                      onChange={handleTurnoverChange}
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="Entrez l'effectif 2"
                     />
@@ -257,11 +268,11 @@ export default function AdminLaboural() {
                 </div>
 
                 <div className="flex gap-3 pt-4">
-                  <Button type="button" variant="outline" className="flex-1">
+                  <Button type="button" variant="outline" className="flex-1" onClick={handleTurnoverReset} disabled={turnoverLoading}>
                     Réinitialiser
                   </Button>
-                  <Button type="submit" className="flex-1 bg-green-500 hover:bg-green-600">
-                    Soumettre
+                  <Button type="submit" className="flex-1 bg-green-500 hover:bg-green-600" disabled={turnoverLoading}>
+                    {turnoverLoading ? "Envoi en cours..." : "Soumettre"}
                   </Button>
                 </div>
               </form>
