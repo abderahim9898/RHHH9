@@ -61,16 +61,13 @@ export default function AdminLaboural() {
         },
         body: JSON.stringify({
           googleScriptUrl: "https://script.google.com/macros/s/AKfycbwwdWlQ10lmBrp2v_368EkjcBDsgljzBfLsTiV8NbtZpQlSffin8RpQmys0GSqlk5A/exec",
-          action: "uploadData",
-          headers: ["Mois", "Baja", "Groupe", "Contrat", "Effectif1", "Effectif2"],
-          data: [{
-            Mois: turnoverData.mois,
-            Baja: turnoverData.baja,
-            Groupe: turnoverData.group,
-            Contrat: turnoverData.contrat,
-            Effectif1: turnoverData.effectif1,
-            Effectif2: turnoverData.effectif2,
-          }],
+          action: "submitForm",
+          mois: turnoverData.mois,
+          baja: turnoverData.baja,
+          groupe: turnoverData.group,
+          contrat: turnoverData.contrat,
+          effectif1: turnoverData.effectif1,
+          effectif2: turnoverData.effectif2,
         }),
       });
 
