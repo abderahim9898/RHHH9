@@ -60,7 +60,7 @@ export default function AdminSuperadmin() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          googleScriptUrl: "https://script.google.com/macros/s/AKfycbwwdWlQ10lmBrp2v_368EkjcBDsgljzBfLsTiV8NbtZpQlSffin8RpQmys0GSqlk5A/exec",
+          googleScriptUrl: "https://script.google.com/macros/s/AKfycbxIMp6iuxHymhAOEgHKjcQjRHisRkNktK2PQJl8cgzaukc3CKJ1sdX95isSqelipxSA/exec",
           action: "submitForm",
           mois: turnoverData.mois,
           baja: turnoverData.baja,
