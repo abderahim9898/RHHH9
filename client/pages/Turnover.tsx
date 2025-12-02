@@ -24,6 +24,30 @@ interface MonthData {
   groups: TurnoverRecord[];
 }
 
+const formatMonthDisplay = (month: string | number): string => {
+  const monthStr = String(month).trim();
+
+  // Check if it's an ISO date string
+  if (monthStr.includes("T") || monthStr.includes("-")) {
+    try {
+      const date = new Date(monthStr);
+      const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+      return `${monthNames[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
+    } catch {
+      return monthStr;
+    }
+  }
+
+  // Check if it contains month name already (e.g., "October 2025")
+  if (/[A-Za-z]/.test(monthStr)) {
+    return monthStr;
+  }
+
+  // Otherwise treat as month number
+  return `Mois ${monthStr}`;
+};
+
 export default function Turnover() {
   const [data, setData] = useState<TurnoverRecord[]>([]);
   const [loading, setLoading] = useState(true);
