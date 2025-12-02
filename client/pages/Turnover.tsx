@@ -262,7 +262,7 @@ export default function Turnover() {
                     <option value="">Tous les mois</option>
                     {uniqueMonths.map((month) => (
                       <option key={month} value={month}>
-                        Mois {month}
+                        {formatMonthDisplay(month)}
                       </option>
                     ))}
                   </select>
@@ -368,7 +368,7 @@ export default function Turnover() {
                         : "border-gray-200 dark:border-slate-700 hover:border-blue-400"
                     }`}
                   >
-                    <div className="text-sm font-medium text-gray-600 dark:text-gray-400">Mois {month.month}</div>
+                    <div className="text-sm font-medium text-gray-600 dark:text-gray-400">{formatMonthDisplay(month.month)}</div>
                     <div className="mt-2 space-y-1">
                       <div className="flex justify-between">
                         <span className="text-xs text-gray-600 dark:text-gray-400">Départs:</span>
@@ -393,7 +393,7 @@ export default function Turnover() {
             {/* Detailed Table */}
             <div className="bg-white dark:bg-slate-900 rounded-lg shadow p-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                {selectedMonth ? `Détails du Mois ${selectedMonth}` : "Tous les détails"}
+                {selectedMonth ? `Détails du ${formatMonthDisplay(selectedMonth)}` : "Tous les détails"}
                 {(filterMonth || filterGroup || filterContract) && (
                   <span className="text-sm font-normal text-gray-600 dark:text-gray-400 ml-2">
                     ({filteredData.length} résultat{filteredData.length !== 1 ? "s" : ""})
@@ -431,7 +431,7 @@ export default function Turnover() {
                             key={`${record.month}-${record.group}-${record.contractType}-${idx}`}
                             className="border-b border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                           >
-                            <td className="px-4 py-3 text-gray-900 dark:text-white font-medium">Mois {record.month}</td>
+                            <td className="px-4 py-3 text-gray-900 dark:text-white font-medium">{formatMonthDisplay(record.month)}</td>
                             <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{record.group}</td>
                             <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{record.contractType}</td>
                             <td className="px-4 py-3 text-right">
