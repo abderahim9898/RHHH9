@@ -44,8 +44,8 @@ export default function AdminSuperadmin() {
     if (!monthValue) return "";
     const [year, month] = monthValue.split("-");
     const monthNum = parseInt(month) - 1;
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"];
+    const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+      "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
     return `${monthNames[monthNum]} 2, ${year}`;
   };
 

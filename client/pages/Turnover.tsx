@@ -26,12 +26,12 @@ interface MonthData {
 
 const formatMonthDisplay = (month: string | number): string => {
   const monthStr = String(month).trim();
+  const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
   // Check if it's YYYY-MM format (from HTML month input)
   if (/^\d{4}-\d{2}$/.test(monthStr)) {
     const [year, monthNum] = monthStr.split("-");
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"];
     return `${monthNames[parseInt(monthNum) - 1]} ${year}`;
   }
 
@@ -39,16 +39,14 @@ const formatMonthDisplay = (month: string | number): string => {
   if (monthStr.includes("T") || monthStr.includes("Z")) {
     try {
       const date = new Date(monthStr);
-      const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
       return `${monthNames[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
     } catch {
       return monthStr;
     }
   }
 
-  // Check if it contains month name already (e.g., "October 2025")
-  if (/[A-Za-z]/.test(monthStr)) {
+  // Check if it contains month name (French or English)
+  if (/[A-Za-zàâäæèéêëìîïòôöœùûüÿçÀÂÄÆÈÉÊËÌÎÏÒÔÖŒÙÛÜŸÇ]/.test(monthStr)) {
     return monthStr;
   }
 
