@@ -35,16 +35,9 @@ export default function Recruitment() {
         const timeoutId = setTimeout(() => controller.abort(), 60000);
 
         console.log("Fetching recruitment data...");
-        const response = await fetch("/api/admin/upload", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            googleScriptUrl: "https://script.google.com/macros/s/AKfycbwxBq-SQQy615zPDODiglrrUaiwpRy_j8PlYFwqn1Zgpz9szCgG2xd6JninXnT60nG_/exec",
-            action: "getData",
-          }),
+        const response = await fetch("/api/recruitment", {
           signal: controller.signal,
+          headers: { "Accept": "application/json" },
         });
 
         clearTimeout(timeoutId);
