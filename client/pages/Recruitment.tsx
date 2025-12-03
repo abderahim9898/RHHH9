@@ -178,9 +178,26 @@ export default function Recruitment() {
 
     rawData.forEach((record) => {
       // Month data - try multiple possible column names
-      const month = String(
-        record["Mois"] || record["mois"] || record["Mes"] || record["mes"] || record["Month"] || record["month"] || "Unknown"
+      let month = String(
+        record["Mois"] || record["mois"] || record["Mes"] || record["mes"] || record["Month"] || record["month"] || ""
       ).trim();
+
+      // If no month value, try to extract from DATE field
+      if (!month) {
+        const date = String(record["DATE"] || record["Date"] || record["date"] || "").trim();
+        if (date) {
+          // Try to extract month number from date (MM from MM/DD/YYYY or similar)
+          const dateMatch = date.match(/^(\d{1,2})/);
+          if (dateMatch) {
+            month = dateMatch[1];
+          }
+        }
+      }
+
+      if (!month) {
+        month = "Unknown";
+      }
+
       monthMap.set(month, (monthMap.get(month) || 0) + 1);
 
       // Department data
