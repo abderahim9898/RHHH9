@@ -173,8 +173,10 @@ export default function Recruitment() {
     const qzMap = new Map<string, number>();
 
     rawData.forEach((record) => {
-      // Month data
-      const month = String(record["Mes"] || record["mes"] || record["Month"] || "Unknown").trim();
+      // Month data - try multiple possible column names
+      const month = String(
+        record["Mois"] || record["mois"] || record["Mes"] || record["mes"] || record["Month"] || record["month"] || "Unknown"
+      ).trim();
       monthMap.set(month, (monthMap.get(month) || 0) + 1);
 
       // Department data
