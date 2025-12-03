@@ -342,24 +342,20 @@ export default function Index() {
     return () => {
       isMounted = false;
 
-      // Clear all timeouts first
+      // Clear all timeouts
       timeoutIds.forEach(id => {
         clearTimeout(id);
       });
 
-      // Abort all fetch requests - use a small delay to allow promises to settle
-      // This prevents unhandled rejections
-      queueMicrotask(() => {
-        abortControllers.forEach(controller => {
-          try {
-            if (!controller.signal.aborted) {
-              controller.abort();
-            }
-          } catch (e) {
-            // Silently ignore abort errors - they're expected during cleanup
-          }
-        });
-      });
+      // Abort all fetch requests safely
+      // Note: AbortError is expected and handled by the promise chains above
+      for (const controller of abortControllers) {
+        try {
+          controller.abort();
+        } catch (e) {
+          // Ignore - abort() should not throw but we're being defensive
+        }
+      }
     };
   }, []);
 
