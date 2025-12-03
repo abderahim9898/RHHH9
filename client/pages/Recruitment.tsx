@@ -123,30 +123,34 @@ export default function Recruitment() {
 
     rawData.forEach((record) => {
       // Count gender (looking for common patterns)
-      const gender = String(record["Sexo"] || record["sexo"] || record["gender"] || "").trim().toLowerCase();
-      if (gender === "h" || gender === "m" || gender === "homme" || gender === "male") {
+      const gender = String(
+        record["Sexo"] || record["sexo"] || record["SEXO"] || record["gender"] || record["Gender"] || ""
+      ).trim().toLowerCase();
+      if (gender === "h" || gender === "m" || gender === "homme" || gender === "male" || gender === "hombre") {
         maleCount++;
-      } else if (gender === "f" || gender === "femme" || gender === "female" || gender === "w") {
+      } else if (gender === "f" || gender === "femme" || gender === "female" || gender === "w" || gender === "mujer") {
         femaleCount++;
       }
 
       // Get age
-      const age = record["Edad"] || record["edad"] || record["age"] || record["Age"];
+      const age = record["Edad"] || record["edad"] || record["EDAD"] || record["age"] || record["Age"];
       if (typeof age === "number" && age > 0) {
         totalAge += age;
         ageCount++;
       }
 
       // Get department
-      const dept = record["Departamento"] || record["departamento"] || record["department"] || record["Department"];
-      if (dept) {
-        departments.add(String(dept).trim());
+      const dept = record["Département"] || record["département"] || record["Departamento"] || record["departamento"] || record["DEPARTEMENT"] || record["department"] || record["Department"];
+      const deptStr = String(dept).trim();
+      if (deptStr) {
+        departments.add(deptStr);
       }
 
       // Get QZ
-      const qz = record["QZ"] || record["qz"] || record["Qz"];
-      if (qz) {
-        qzs.add(String(qz).trim());
+      const qz = record["QZ"] || record["qz"] || record["Qz"] || record["QZ_ZONE"];
+      const qzStr = String(qz).trim();
+      if (qzStr) {
+        qzs.add(qzStr);
       }
     });
 
