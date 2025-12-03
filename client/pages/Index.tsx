@@ -248,7 +248,7 @@ export default function Index() {
 
         // Fetch workforce data in parallel
         fetchWithTimeout("/api/workforce", 30000)
-          .then((workforceResponse) => {
+          .then(async (workforceResponse) => {
             if (!isMounted) return null;
 
             if (!workforceResponse) {
@@ -257,14 +257,19 @@ export default function Index() {
             }
 
             if (workforceResponse.ok) {
-              return workforceResponse.json();
+              try {
+                return await workforceResponse.json();
+              } catch (e) {
+                console.debug("Failed to parse workforce JSON");
+                return null;
+              }
             } else {
               console.debug("Workforce: Response status", workforceResponse.status);
               return null;
             }
           })
           .then((workforceData) => {
-            if (!isMounted) return;
+            if (!isMounted || !workforceData) return;
 
             if (Array.isArray(workforceData) && workforceData.length > 0) {
               const departmentSet = new Set<string>();
@@ -311,9 +316,9 @@ export default function Index() {
               }
             }
           })
-          .catch((err) => {
-            if (isMounted) {
-              console.debug("Workforce stats error (non-critical):", err instanceof Error ? err.message : "Unknown error");
+          .catch((err: unknown) => {
+            if (isMounted && err instanceof Error && err.name !== 'AbortError') {
+              console.debug("Workforce stats error (non-critical):", err.message);
             }
           });
 
