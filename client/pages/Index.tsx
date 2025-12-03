@@ -246,10 +246,9 @@ export default function Index() {
               }
             }
           })
-          .catch((err: unknown) => {
-            if (isMounted && err instanceof Error && err.name !== 'AbortError') {
-              console.debug("Attendance stats error (non-critical):", err.message);
-            }
+          .catch(() => {
+            // Silently handle all errors including AbortError
+            // Non-critical data fetch
           });
 
         // Fetch workforce data in parallel
