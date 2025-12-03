@@ -152,6 +152,76 @@ export default function Turnover() {
     fetchTurnoverData();
   }, [retryKey]);
 
+  // Fetch recruitment data
+  useEffect(() => {
+    const fetchRecruitmentDataFunc = async () => {
+      try {
+        setRecruitmentLoading(true);
+        setRecruitmentError(null);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+
+        console.log("Fetching recruitment data...");
+        const response = await fetch("/api/recruitment", {
+          signal: controller.signal,
+          headers: { "Accept": "application/json" },
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch recruitment data: ${response.status}`);
+        }
+
+        const rawData = await response.json();
+        console.log("Recruitment data received:", rawData);
+
+        if (Array.isArray(rawData) && rawData.length > 1) {
+          const processedData: RecruitmentRecord[] = [];
+
+          for (let i = 1; i < rawData.length; i++) {
+            const row = rawData[i];
+            if (!row || !Array.isArray(row) || row.length < 5) continue;
+
+            const qz = (row[0] || "").toString().trim();
+            const month = row[1] || "";
+            const sexo = (row[2] || "").toString().trim();
+            const department = (row[4] || "").toString().trim();
+            const contado = (row[3] || "").toString().trim();
+            const nbBaja = parseInt(row[5]) || 0;
+
+            if (qz && month && department) {
+              processedData.push({
+                qz,
+                month,
+                sexo,
+                contado,
+                department,
+                nbBaja,
+              });
+            }
+          }
+
+          console.log("Processed recruitment records:", processedData.length);
+          setRecruitmentData(processedData);
+        } else {
+          console.warn("No recruitment data received from server");
+          setRecruitmentData([]);
+        }
+      } catch (err) {
+        console.error("Error fetching recruitment data:", err);
+        const errorMessage = err instanceof Error ? err.message : "Failed to load recruitment data";
+        setRecruitmentError(errorMessage);
+        setRecruitmentData([]);
+      } finally {
+        setRecruitmentLoading(false);
+      }
+    };
+
+    fetchRecruitmentDataFunc();
+  }, [recruitmentRetryKey]);
+
   // Get unique filter values
   const uniqueMonths = useMemo(() => {
     return Array.from(new Set(data.map((r) => r.month))).sort(
