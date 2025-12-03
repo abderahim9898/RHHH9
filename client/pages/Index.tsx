@@ -188,7 +188,7 @@ export default function Index() {
 
         // Fetch attendance data in parallel
         fetchWithTimeout("/api/attendance", 30000)
-          .then((attendanceResponse) => {
+          .then(async (attendanceResponse) => {
             if (!isMounted) return null;
 
             if (!attendanceResponse) {
@@ -197,14 +197,19 @@ export default function Index() {
             }
 
             if (attendanceResponse.ok) {
-              return attendanceResponse.json();
+              try {
+                return await attendanceResponse.json();
+              } catch (e) {
+                console.debug("Failed to parse attendance JSON");
+                return null;
+              }
             } else {
               console.debug("Attendance: Response status", attendanceResponse.status);
               return null;
             }
           })
           .then((attendanceData) => {
-            if (!isMounted) return;
+            if (!isMounted || !attendanceData) return;
 
             if (Array.isArray(attendanceData) && attendanceData.length > 0) {
               let totalPresent = 0;
@@ -235,9 +240,9 @@ export default function Index() {
               }
             }
           })
-          .catch((err) => {
-            if (isMounted) {
-              console.debug("Attendance stats error (non-critical):", err instanceof Error ? err.message : "Unknown error");
+          .catch((err: unknown) => {
+            if (isMounted && err instanceof Error && err.name !== 'AbortError') {
+              console.debug("Attendance stats error (non-critical):", err.message);
             }
           });
 
