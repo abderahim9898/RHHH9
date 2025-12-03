@@ -94,35 +94,37 @@ export default function Index() {
     const timeoutIds: NodeJS.Timeout[] = [];
 
     const fetchWithTimeout = async (url: string, timeout = 30000): Promise<Response | null> => {
+      if (!isMounted) return null;
+
       const controller = new AbortController();
       abortControllers.push(controller);
-      const timeoutId = setTimeout(() => {
-        if (isMounted) {
-          try {
-            controller.abort();
-          } catch (e) {
-            // Ignore errors from abort
-          }
-        }
-      }, timeout);
-      timeoutIds.push(timeoutId);
+      let timeoutId: NodeJS.Timeout | null = null;
 
       try {
+        timeoutId = setTimeout(() => {
+          if (!controller.signal.aborted) {
+            controller.abort();
+          }
+        }, timeout);
+        timeoutIds.push(timeoutId);
+
         const response = await fetch(url, {
           signal: controller.signal,
           headers: { 'Accept': 'application/json' }
         });
-        clearTimeout(timeoutId);
-        return response;
+
+        if (timeoutId) clearTimeout(timeoutId);
+        return isMounted ? response : null;
       } catch (err) {
-        clearTimeout(timeoutId);
-        if (isMounted) {
-          if (err instanceof Error) {
-            if (err.name === 'AbortError') {
-              console.debug('Request timeout or aborted:', url);
-            } else {
-              console.debug('Fetch error:', err.message);
-            }
+        if (timeoutId) clearTimeout(timeoutId);
+
+        if (!isMounted) return null;
+
+        if (err instanceof Error) {
+          if (err.name === 'AbortError') {
+            console.debug('Request timeout or aborted:', url);
+          } else {
+            console.debug('Fetch error:', err.message);
           }
         }
         return null;
