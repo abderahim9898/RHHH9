@@ -321,10 +321,9 @@ export default function Index() {
               }
             }
           })
-          .catch((err: unknown) => {
-            if (isMounted && err instanceof Error && err.name !== 'AbortError') {
-              console.debug("Workforce stats error (non-critical):", err.message);
-            }
+          .catch(() => {
+            // Silently handle all errors including AbortError
+            // Non-critical data fetch
           });
 
         // Set loading to false after a short delay to allow data to come in
