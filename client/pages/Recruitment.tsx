@@ -188,18 +188,26 @@ export default function Recruitment() {
       }
 
       // Gender data
-      const genderRaw = String(record["Sexo"] || record["sexo"] || record["Gender"] || "").trim().toLowerCase();
+      const genderRaw = String(
+        record["Sexo"] || record["sexo"] || record["SEXO"] || record["Gender"] || record["gender"] || ""
+      ).trim().toLowerCase();
       let genderLabel = "Unknown";
-      if (genderRaw === "h" || genderRaw === "m" || genderRaw === "homme" || genderRaw === "male") {
+      if (genderRaw === "h" || genderRaw === "m" || genderRaw === "homme" || genderRaw === "male" || genderRaw === "hombre") {
         genderLabel = "Homme";
-      } else if (genderRaw === "f" || genderRaw === "femme" || genderRaw === "female" || genderRaw === "w") {
+      } else if (genderRaw === "f" || genderRaw === "femme" || genderRaw === "female" || genderRaw === "w" || genderRaw === "mujer") {
         genderLabel = "Femme";
       }
-      genderMap.set(genderLabel, (genderMap.get(genderLabel) || 0) + 1);
+      if (genderLabel !== "Unknown") {
+        genderMap.set(genderLabel, (genderMap.get(genderLabel) || 0) + 1);
+      }
 
       // QZ data
-      const qz = String(record["QZ"] || record["qz"] || record["Qz"] || "Other").trim();
-      qzMap.set(qz, (qzMap.get(qz) || 0) + 1);
+      const qz = String(
+        record["QZ"] || record["qz"] || record["Qz"] || record["QZ_ZONE"] || "Other"
+      ).trim();
+      if (qz && qz !== "Other") {
+        qzMap.set(qz, (qzMap.get(qz) || 0) + 1);
+      }
     });
 
     return {
