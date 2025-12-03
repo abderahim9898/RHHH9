@@ -180,8 +180,12 @@ export default function Recruitment() {
       monthMap.set(month, (monthMap.get(month) || 0) + 1);
 
       // Department data
-      const dept = String(record["Departamento"] || record["departamento"] || record["Department"] || "Other").trim();
-      deptMap.set(dept, (deptMap.get(dept) || 0) + 1);
+      const dept = String(
+        record["Département"] || record["département"] || record["Departamento"] || record["departamento"] || record["Department"] || record["DEPARTEMENT"] || "Other"
+      ).trim();
+      if (dept && dept !== "Other") {
+        deptMap.set(dept, (deptMap.get(dept) || 0) + 1);
+      }
 
       // Gender data
       const genderRaw = String(record["Sexo"] || record["sexo"] || record["Gender"] || "").trim().toLowerCase();
