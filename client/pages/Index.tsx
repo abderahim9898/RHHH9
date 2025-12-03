@@ -353,15 +353,17 @@ export default function Index() {
         clearTimeout(id);
       });
 
-      // Abort all fetch requests safely
-      // Note: AbortError is expected and handled by the promise chains above
-      for (const controller of abortControllers) {
-        try {
-          controller.abort();
-        } catch (e) {
-          // Ignore - abort() should not throw but we're being defensive
+      // Abort all fetch requests with error suppression
+      // This prevents unhandled AbortErrors from propagating
+      abortControllers.forEach(controller => {
+        if (!controller.signal.aborted) {
+          try {
+            controller.abort();
+          } catch (e) {
+            // Silently ignore any errors from abort
+          }
         }
-      }
+      });
     };
   }, []);
 
