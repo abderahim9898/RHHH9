@@ -70,10 +70,14 @@ const formatMonthDisplay = (month: string | number): string => {
 
 export default function Turnover() {
   const [data, setData] = useState<TurnoverRecord[]>([]);
+  const [recruitmentData, setRecruitmentData] = useState<RecruitmentRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [recruitmentLoading, setRecruitmentLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [recruitmentError, setRecruitmentError] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string | number | null>(null);
   const [retryKey, setRetryKey] = useState(0);
+  const [recruitmentRetryKey, setRecruitmentRetryKey] = useState(0);
   const [filterMonth, setFilterMonth] = useState<string | number | null>(null);
   const [filterGroup, setFilterGroup] = useState<string | null>(null);
   const [filterContract, setFilterContract] = useState<string | null>(null);
