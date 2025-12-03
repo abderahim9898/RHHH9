@@ -307,6 +307,54 @@ export default function Turnover() {
   // Get selected month data
   const selectedMonthData = monthlyData.find((m) => m.month === selectedMonth);
 
+  // Get unique QZs and months for recruitment
+  const uniqueQZs = useMemo(() => {
+    return Array.from(new Set(recruitmentData.map((r) => r.qz))).sort();
+  }, [recruitmentData]);
+
+  const uniqueRecruitmentMonths = useMemo(() => {
+    return Array.from(new Set(recruitmentData.map((r) => r.month))).sort(
+      (a, b) => (parseInt(String(a)) || 0) - (parseInt(String(b)) || 0)
+    );
+  }, [recruitmentData]);
+
+  // Prepare recruitment chart data
+  const recruitmentChartData = useMemo(() => {
+    const monthMap = new Map<string | number, RecruitmentMonthData>();
+
+    for (let i = 1; i <= 12; i++) {
+      const monthData: RecruitmentMonthData = { month: `Mois ${i}` };
+      uniqueQZs.forEach((qz) => {
+        monthData[qz] = 0;
+      });
+      monthMap.set(i, monthData);
+    }
+
+    recruitmentData.forEach((record) => {
+      const monthNum = parseInt(String(record.month)) || 0;
+      if (monthMap.has(monthNum)) {
+        const monthData = monthMap.get(monthNum)!;
+        monthData[record.qz] = (monthData[record.qz] as number || 0) + record.nbBaja;
+      }
+    });
+
+    return Array.from(monthMap.values()).sort((a, b) => {
+      const aMonth = parseInt(String(a.month).replace("Mois ", "")) || 0;
+      const bMonth = parseInt(String(b.month).replace("Mois ", "")) || 0;
+      return aMonth - bMonth;
+    });
+  }, [recruitmentData, uniqueQZs]);
+
+  // Color palette for QZ bars in recruitment chart
+  const colors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
+  const qzColors = uniqueQZs.reduce(
+    (acc, qz, idx) => {
+      acc[qz] = colors[idx % colors.length];
+      return acc;
+    },
+    {} as Record<string, string>
+  );
+
   return (
     <Layout>
       <div className="space-y-6 p-4 md:p-6">
