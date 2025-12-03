@@ -139,13 +139,16 @@ export default function Index() {
         // Check server health first
         try {
           const healthResponse = await fetchWithTimeout("/health", 5000);
+          if (!isMounted) return;
           if (!healthResponse || !healthResponse.ok) {
             console.warn("⚠️ Server health check failed, API may not be available");
           } else {
             console.log("✅ Server is healthy");
           }
         } catch (err) {
-          console.debug("Health check failed:", err instanceof Error ? err.message : "Unknown");
+          if (isMounted && err instanceof Error && err.name !== 'AbortError') {
+            console.debug("Health check failed:", err.message);
+          }
         }
 
         // Fetch dashboard summary with proper error handling
