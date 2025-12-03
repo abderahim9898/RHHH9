@@ -185,11 +185,37 @@ export default function Recruitment() {
       // If no month value, try to extract from DATE field
       if (!month) {
         const date = String(record["DATE"] || record["Date"] || record["date"] || "").trim();
-        if (date) {
-          // Try to extract month number from date (MM from MM/DD/YYYY or similar)
-          const dateMatch = date.match(/^(\d{1,2})/);
-          if (dateMatch) {
-            month = dateMatch[1];
+        if (date && date.length > 0) {
+          try {
+            // Handle multiple date formats: DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD, etc.
+            let dateObj: Date | null = null;
+
+            // Try parsing as Date object first
+            dateObj = new Date(date);
+            if (isNaN(dateObj.getTime())) {
+              // Try DD/MM/YYYY format
+              const parts = date.split(/[\/\-]/);
+              if (parts.length === 3) {
+                const day = parseInt(parts[0]);
+                const monthPart = parseInt(parts[1]);
+                const year = parseInt(parts[2]);
+                if (!isNaN(day) && !isNaN(monthPart) && !isNaN(year)) {
+                  // Assume DD/MM/YYYY if day > 12 (day can't be month)
+                  if (day > 12) {
+                    dateObj = new Date(year, monthPart - 1, day);
+                  } else {
+                    // Ambiguous, try MM/DD/YYYY
+                    dateObj = new Date(year, day - 1, monthPart);
+                  }
+                }
+              }
+            }
+
+            if (dateObj && !isNaN(dateObj.getTime())) {
+              month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            }
+          } catch (e) {
+            // Date parsing failed, continue
           }
         }
       }
