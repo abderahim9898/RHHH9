@@ -24,20 +24,6 @@ interface MonthData {
   groups: TurnoverRecord[];
 }
 
-interface RecruitmentRecord {
-  qz: string;
-  month: string | number;
-  sexo: string;
-  department: string;
-  contado: string;
-  nbBaja: number;
-}
-
-interface RecruitmentMonthData {
-  month: string | number;
-  [key: string]: string | number;
-}
-
 const formatMonthDisplay = (month: string | number): string => {
   const monthStr = String(month).trim();
   const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
@@ -70,14 +56,10 @@ const formatMonthDisplay = (month: string | number): string => {
 
 export default function Turnover() {
   const [data, setData] = useState<TurnoverRecord[]>([]);
-  const [recruitmentData, setRecruitmentData] = useState<RecruitmentRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [recruitmentLoading, setRecruitmentLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [recruitmentError, setRecruitmentError] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string | number | null>(null);
   const [retryKey, setRetryKey] = useState(0);
-  const [recruitmentRetryKey, setRecruitmentRetryKey] = useState(0);
   const [filterMonth, setFilterMonth] = useState<string | number | null>(null);
   const [filterGroup, setFilterGroup] = useState<string | null>(null);
   const [filterContract, setFilterContract] = useState<string | null>(null);
@@ -151,76 +133,6 @@ export default function Turnover() {
 
     fetchTurnoverData();
   }, [retryKey]);
-
-  // Fetch recruitment data
-  useEffect(() => {
-    const fetchRecruitmentDataFunc = async () => {
-      try {
-        setRecruitmentLoading(true);
-        setRecruitmentError(null);
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 60000);
-
-        console.log("Fetching recruitment data...");
-        const response = await fetch("/api/recruitment", {
-          signal: controller.signal,
-          headers: { "Accept": "application/json" },
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch recruitment data: ${response.status}`);
-        }
-
-        const rawData = await response.json();
-        console.log("Recruitment data received:", rawData);
-
-        if (Array.isArray(rawData) && rawData.length > 1) {
-          const processedData: RecruitmentRecord[] = [];
-
-          for (let i = 1; i < rawData.length; i++) {
-            const row = rawData[i];
-            if (!row || !Array.isArray(row) || row.length < 5) continue;
-
-            const qz = (row[0] || "").toString().trim();
-            const month = row[1] || "";
-            const sexo = (row[2] || "").toString().trim();
-            const department = (row[4] || "").toString().trim();
-            const contado = (row[3] || "").toString().trim();
-            const nbBaja = parseInt(row[5]) || 0;
-
-            if (qz && month && department) {
-              processedData.push({
-                qz,
-                month,
-                sexo,
-                contado,
-                department,
-                nbBaja,
-              });
-            }
-          }
-
-          console.log("Processed recruitment records:", processedData.length);
-          setRecruitmentData(processedData);
-        } else {
-          console.warn("No recruitment data received from server");
-          setRecruitmentData([]);
-        }
-      } catch (err) {
-        console.error("Error fetching recruitment data:", err);
-        const errorMessage = err instanceof Error ? err.message : "Failed to load recruitment data";
-        setRecruitmentError(errorMessage);
-        setRecruitmentData([]);
-      } finally {
-        setRecruitmentLoading(false);
-      }
-    };
-
-    fetchRecruitmentDataFunc();
-  }, [recruitmentRetryKey]);
 
   // Get unique filter values
   const uniqueMonths = useMemo(() => {
@@ -306,54 +218,6 @@ export default function Turnover() {
 
   // Get selected month data
   const selectedMonthData = monthlyData.find((m) => m.month === selectedMonth);
-
-  // Get unique QZs and months for recruitment
-  const uniqueQZs = useMemo(() => {
-    return Array.from(new Set(recruitmentData.map((r) => r.qz))).sort();
-  }, [recruitmentData]);
-
-  const uniqueRecruitmentMonths = useMemo(() => {
-    return Array.from(new Set(recruitmentData.map((r) => r.month))).sort(
-      (a, b) => (parseInt(String(a)) || 0) - (parseInt(String(b)) || 0)
-    );
-  }, [recruitmentData]);
-
-  // Prepare recruitment chart data
-  const recruitmentChartData = useMemo(() => {
-    const monthMap = new Map<string | number, RecruitmentMonthData>();
-
-    for (let i = 1; i <= 12; i++) {
-      const monthData: RecruitmentMonthData = { month: `Mois ${i}` };
-      uniqueQZs.forEach((qz) => {
-        monthData[qz] = 0;
-      });
-      monthMap.set(i, monthData);
-    }
-
-    recruitmentData.forEach((record) => {
-      const monthNum = parseInt(String(record.month)) || 0;
-      if (monthMap.has(monthNum)) {
-        const monthData = monthMap.get(monthNum)!;
-        monthData[record.qz] = (monthData[record.qz] as number || 0) + record.nbBaja;
-      }
-    });
-
-    return Array.from(monthMap.values()).sort((a, b) => {
-      const aMonth = parseInt(String(a.month).replace("Mois ", "")) || 0;
-      const bMonth = parseInt(String(b.month).replace("Mois ", "")) || 0;
-      return aMonth - bMonth;
-    });
-  }, [recruitmentData, uniqueQZs]);
-
-  // Color palette for QZ bars in recruitment chart
-  const colors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
-  const qzColors = uniqueQZs.reduce(
-    (acc, qz, idx) => {
-      acc[qz] = colors[idx % colors.length];
-      return acc;
-    },
-    {} as Record<string, string>
-  );
 
   return (
     <Layout>
@@ -607,119 +471,6 @@ export default function Turnover() {
                   </tbody>
                 </table>
               </div>
-            </div>
-
-            {/* Recruitment Section */}
-            <div className="mt-12 pt-12 border-t border-gray-200 dark:border-slate-700">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                📋 Recrutement et Intégration
-              </h2>
-
-              {recruitmentError && (
-                <Alert variant="destructive" className="mb-6">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{recruitmentError}</AlertDescription>
-                  <Button onClick={() => setRecruitmentRetryKey((k) => k + 1)} size="sm" className="ml-auto">
-                    <RotateCcw size={16} /> Réessayer
-                  </Button>
-                </Alert>
-              )}
-
-              {recruitmentLoading ? (
-                <div className="text-center py-12">
-                  <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
-                  <p className="mt-4 text-gray-600 dark:text-gray-400">Chargement des données de recrutement...</p>
-                </div>
-              ) : recruitmentData.length === 0 ? (
-                <Alert>
-                  <AlertDescription>Aucune donnée de recrutement disponible</AlertDescription>
-                </Alert>
-              ) : (
-                <div className="space-y-6">
-                  {/* Recruitment Chart */}
-                  <div className="bg-white dark:bg-slate-900 rounded-lg shadow p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                      Recrutements par Mois et QZ
-                    </h3>
-                    <div className="w-full h-96 bg-white dark:bg-slate-900 rounded-lg p-4">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={recruitmentChartData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="month" angle={-45} textAnchor="end" height={80} />
-                          <YAxis label={{ value: "Nombre de Recrutements", angle: -90, position: "insideLeft" }} />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: "rgba(0, 0, 0, 0.8)",
-                              border: "none",
-                              borderRadius: "8px",
-                              color: "#fff",
-                            }}
-                          />
-                          <Legend />
-                          {uniqueQZs.map((qz) => (
-                            <Bar
-                              key={qz}
-                              dataKey={qz}
-                              fill={qzColors[qz]}
-                              name={qz}
-                              stackId="a"
-                            />
-                          ))}
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-
-                  {/* Recruitment Table */}
-                  <div className="bg-white dark:bg-slate-900 rounded-lg shadow p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                      Données Détaillées du Recrutement
-                    </h3>
-
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800">
-                            <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">QZ</th>
-                            <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Mois</th>
-                            <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Sexo</th>
-                            <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Contrado</th>
-                            <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Département</th>
-                            <th className="px-4 py-3 text-right font-semibold text-gray-900 dark:text-white">Nombre Baja</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {recruitmentData.length === 0 ? (
-                            <tr>
-                              <td colSpan={6} className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
-                                Aucune donnée disponible
-                              </td>
-                            </tr>
-                          ) : (
-                            recruitmentData.map((record, idx) => (
-                              <tr
-                                key={`${record.qz}-${record.month}-${record.sexo}-${idx}`}
-                                className="border-b border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
-                              >
-                                <td className="px-4 py-3 text-gray-900 dark:text-white font-medium">{record.qz}</td>
-                                <td className="px-4 py-3 text-gray-600 dark:text-gray-400">Mois {record.month}</td>
-                                <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{record.sexo}</td>
-                                <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{record.contado}</td>
-                                <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{record.department}</td>
-                                <td className="px-4 py-3 text-right">
-                                  <span className="inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded font-semibold">
-                                    {record.nbBaja}
-                                  </span>
-                                </td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
