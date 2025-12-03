@@ -24,6 +24,20 @@ interface MonthData {
   groups: TurnoverRecord[];
 }
 
+interface RecruitmentRecord {
+  qz: string;
+  month: string | number;
+  sexo: string;
+  department: string;
+  contado: string;
+  nbBaja: number;
+}
+
+interface RecruitmentMonthData {
+  month: string | number;
+  [key: string]: string | number;
+}
+
 const formatMonthDisplay = (month: string | number): string => {
   const monthStr = String(month).trim();
   const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
