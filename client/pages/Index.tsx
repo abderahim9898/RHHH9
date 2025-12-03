@@ -102,8 +102,11 @@ export default function Index() {
 
       try {
         timeoutId = setTimeout(() => {
-          if (!controller.signal.aborted) {
+          if (!isMounted || controller.signal.aborted) return;
+          try {
             controller.abort();
+          } catch (e) {
+            // Ignore abort errors
           }
         }, timeout);
         timeoutIds.push(timeoutId);
