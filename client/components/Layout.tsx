@@ -1,5 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Lock } from "lucide-react";
+import AdminLogin from "@/components/AdminLogin";
+import { Button } from "@/components/ui/button";
 
 interface LayoutProps {
   children: ReactNode;
@@ -7,6 +9,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const [isDark, setIsDark] = useState(false);
+  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
 
   useEffect(() => {
     // Check if dark mode is already set in localStorage or system preference
@@ -35,6 +38,10 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <AdminLogin
+        isOpen={isAdminLoginOpen}
+        onOpenChange={setIsAdminLoginOpen}
+      />
       <header className="border-b border-border bg-background sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex items-center justify-between">
@@ -53,17 +60,28 @@ export default function Layout({ children }: LayoutProps) {
                 </p>
               </div>
             </div>
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-muted transition-colors"
-              aria-label="Basculer le thème"
-            >
-              {isDark ? (
-                <Sun className="w-5 h-5 text-accent" />
-              ) : (
-                <Moon className="w-5 h-5 text-primary" />
-              )}
-            </button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => setIsAdminLoginOpen(true)}
+                variant="ghost"
+                size="icon"
+                aria-label="Admin"
+                title="Accès Admin"
+              >
+                <Lock className="w-5 h-5 text-primary" />
+              </Button>
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg hover:bg-muted transition-colors"
+                aria-label="Basculer le thème"
+              >
+                {isDark ? (
+                  <Sun className="w-5 h-5 text-accent" />
+                ) : (
+                  <Moon className="w-5 h-5 text-primary" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </header>

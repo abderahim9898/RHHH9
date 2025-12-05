@@ -94,35 +94,40 @@ export default function Index() {
     const timeoutIds: NodeJS.Timeout[] = [];
 
     const fetchWithTimeout = async (url: string, timeout = 30000): Promise<Response | null> => {
+      if (!isMounted) return null;
+
       const controller = new AbortController();
       abortControllers.push(controller);
-      const timeoutId = setTimeout(() => {
-        if (isMounted) {
+      let timeoutId: NodeJS.Timeout | null = null;
+
+      try {
+        timeoutId = setTimeout(() => {
+          if (!isMounted || controller.signal.aborted) return;
           try {
             controller.abort();
           } catch (e) {
-            // Ignore errors from abort
+            // Ignore abort errors
           }
-        }
-      }, timeout);
-      timeoutIds.push(timeoutId);
+        }, timeout);
+        timeoutIds.push(timeoutId);
 
-      try {
         const response = await fetch(url, {
           signal: controller.signal,
           headers: { 'Accept': 'application/json' }
         });
-        clearTimeout(timeoutId);
-        return response;
+
+        if (timeoutId) clearTimeout(timeoutId);
+        return isMounted ? response : null;
       } catch (err) {
-        clearTimeout(timeoutId);
-        if (isMounted) {
-          if (err instanceof Error) {
-            if (err.name === 'AbortError') {
-              console.debug('Request timeout or aborted:', url);
-            } else {
-              console.debug('Fetch error:', err.message);
-            }
+        if (timeoutId) clearTimeout(timeoutId);
+
+        if (!isMounted) return null;
+
+        if (err instanceof Error) {
+          if (err.name === 'AbortError') {
+            console.debug('Request timeout or aborted:', url);
+          } else {
+            console.debug('Fetch error:', err.message);
           }
         }
         return null;
@@ -137,13 +142,16 @@ export default function Index() {
         // Check server health first
         try {
           const healthResponse = await fetchWithTimeout("/health", 5000);
+          if (!isMounted) return;
           if (!healthResponse || !healthResponse.ok) {
             console.warn("⚠️ Server health check failed, API may not be available");
           } else {
             console.log("✅ Server is healthy");
           }
         } catch (err) {
-          console.debug("Health check failed:", err instanceof Error ? err.message : "Unknown");
+          if (isMounted && err instanceof Error && err.name !== 'AbortError') {
+            console.debug("Health check failed:", err.message);
+          }
         }
 
         // Fetch dashboard summary with proper error handling
@@ -186,7 +194,7 @@ export default function Index() {
 
         // Fetch attendance data in parallel
         fetchWithTimeout("/api/attendance", 30000)
-          .then((attendanceResponse) => {
+          .then(async (attendanceResponse) => {
             if (!isMounted) return null;
 
             if (!attendanceResponse) {
@@ -195,14 +203,19 @@ export default function Index() {
             }
 
             if (attendanceResponse.ok) {
-              return attendanceResponse.json();
+              try {
+                return await attendanceResponse.json();
+              } catch (e) {
+                console.debug("Failed to parse attendance JSON");
+                return null;
+              }
             } else {
               console.debug("Attendance: Response status", attendanceResponse.status);
               return null;
             }
           })
           .then((attendanceData) => {
-            if (!isMounted) return;
+            if (!isMounted || !attendanceData) return;
 
             if (Array.isArray(attendanceData) && attendanceData.length > 0) {
               let totalPresent = 0;
@@ -233,15 +246,14 @@ export default function Index() {
               }
             }
           })
-          .catch((err) => {
-            if (isMounted) {
-              console.debug("Attendance stats error (non-critical):", err instanceof Error ? err.message : "Unknown error");
-            }
+          .catch(() => {
+            // Silently handle all errors including AbortError
+            // Non-critical data fetch
           });
 
         // Fetch workforce data in parallel
         fetchWithTimeout("/api/workforce", 30000)
-          .then((workforceResponse) => {
+          .then(async (workforceResponse) => {
             if (!isMounted) return null;
 
             if (!workforceResponse) {
@@ -250,14 +262,19 @@ export default function Index() {
             }
 
             if (workforceResponse.ok) {
-              return workforceResponse.json();
+              try {
+                return await workforceResponse.json();
+              } catch (e) {
+                console.debug("Failed to parse workforce JSON");
+                return null;
+              }
             } else {
               console.debug("Workforce: Response status", workforceResponse.status);
               return null;
             }
           })
           .then((workforceData) => {
-            if (!isMounted) return;
+            if (!isMounted || !workforceData) return;
 
             if (Array.isArray(workforceData) && workforceData.length > 0) {
               const departmentSet = new Set<string>();
@@ -304,10 +321,9 @@ export default function Index() {
               }
             }
           })
-          .catch((err) => {
-            if (isMounted) {
-              console.debug("Workforce stats error (non-critical):", err instanceof Error ? err.message : "Unknown error");
-            }
+          .catch(() => {
+            // Silently handle all errors including AbortError
+            // Non-critical data fetch
           });
 
         // Set loading to false after a short delay to allow data to come in
@@ -335,14 +351,15 @@ export default function Index() {
         clearTimeout(id);
       });
 
-      // Abort all fetch requests
+      // Abort all fetch requests with error suppression
+      // This prevents unhandled AbortErrors from propagating
       abortControllers.forEach(controller => {
-        try {
-          if (!controller.signal.aborted) {
+        if (!controller.signal.aborted) {
+          try {
             controller.abort();
+          } catch (e) {
+            // Silently ignore any errors from abort
           }
-        } catch (e) {
-          // Silently ignore abort errors
         }
       });
     };
